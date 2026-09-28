@@ -1,18 +1,12 @@
-import { useState } from 'react';
-import toast from 'react-hot-toast';
+import { useState } from "react";
+import toast from "react-hot-toast";
 
-import { Modal } from './ui';
-import { registerForEvent, joinClub, errMsg } from '../services/api';
-import { YEARS } from '../utils/format';
+import { Modal } from "./ui";
+import { registerForEvent, joinClub, errMsg } from "../services/api";
+import { YEARS } from "../utils/format";
 
 // Reusable Field component MUST be outside RegisterModal
-function Field({
-  label,
-  value,
-  onChange,
-  error,
-  ...props
-}) {
+function Field({ label, value, onChange, error, ...props }) {
   return (
     <div>
       <label className="label">{label}</label>
@@ -20,8 +14,8 @@ function Field({
       <input
         className={`input ${
           error
-            ? 'border-red-400 focus:border-red-500 focus:ring-red-500/10'
-            : ''
+            ? "border-red-400 focus:border-red-500 focus:ring-red-500/10"
+            : ""
         }`}
         value={value}
         onChange={onChange}
@@ -29,9 +23,7 @@ function Field({
       />
 
       {error && (
-        <p className="mt-1 text-xs font-medium text-red-600">
-          {error}
-        </p>
+        <p className="mt-1 text-xs font-medium text-red-600">{error}</p>
       )}
     </div>
   );
@@ -39,21 +31,16 @@ function Field({
 
 // Pass `event` to register for an event,
 // or `club` to join a club.
-export default function RegisterModal({
-  event,
-  club,
-  onClose,
-  onDone,
-}) {
+export default function RegisterModal({ event, club, onClose, onDone }) {
   const isClub = !!club;
   const item = club || event;
 
   const [f, setF] = useState({
-    name: '',
-    email: '',
-    college: '',
-    year: '',
-    phone: '',
+    name: "",
+    email: "",
+    college: "",
+    year: "",
+    phone: "",
   });
 
   const [errs, setErrs] = useState({});
@@ -73,7 +60,7 @@ export default function RegisterModal({
     if (errs[key]) {
       setErrs((prev) => ({
         ...prev,
-        [key]: '',
+        [key]: "",
       }));
     }
   };
@@ -82,23 +69,23 @@ export default function RegisterModal({
     const x = {};
 
     if (!f.name.trim()) {
-      x.name = 'Name is required';
+      x.name = "Name is required";
     }
 
     if (!/^\S+@\S+\.\S+$/.test(f.email)) {
-      x.email = 'Enter a valid email';
+      x.email = "Enter a valid email";
     }
 
     if (!f.college.trim()) {
-      x.college = 'College is required';
+      x.college = "College is required";
     }
 
     if (!f.year) {
-      x.year = 'Select your year';
+      x.year = "Select your year";
     }
 
     if (!/^\d{10}$/.test(f.phone)) {
-      x.phone = 'Phone must be exactly 10 digits';
+      x.phone = "Phone must be exactly 10 digits";
     }
 
     setErrs(x);
@@ -114,24 +101,20 @@ export default function RegisterModal({
     setBusy(true);
 
     try {
-      const r = await (
-        isClub
-          ? joinClub({
-              ...f,
-              club: club._id,
-            })
-          : registerForEvent({
-              ...f,
-              event: event._id,
-            })
-      );
+      const r = await (isClub
+        ? joinClub({
+            ...f,
+            club: club._id,
+          })
+        : registerForEvent({
+            ...f,
+            event: event._id,
+          }));
 
       setDone(r);
 
       toast.success(
-        isClub
-          ? 'Joined club successfully'
-          : 'Registration successful'
+        isClub ? "Joined club successfully" : "Registration successful",
       );
 
       onDone?.();
@@ -148,19 +131,16 @@ export default function RegisterModal({
     return (
       <Modal title="" onClose={onClose}>
         <div className="text-center">
-
           <p className="text-5xl">🎉</p>
 
           <h3 className="mt-3 text-xl font-bold text-slate-900">
-            {isClub
-              ? 'Welcome to the club!'
-              : 'Registration Successful!'}
+            {isClub ? "Welcome to the club!" : "Registration Successful!"}
           </h3>
 
           <p className="mt-3 text-slate-600">
             {isClub
-              ? 'You have successfully joined:'
-              : 'You are successfully registered for:'}
+              ? "You have successfully joined:"
+              : "You are successfully registered for:"}
           </p>
 
           <p className="mt-1 font-semibold text-indigo-700">
@@ -175,13 +155,13 @@ export default function RegisterModal({
 
           <p className="mt-3 text-sm text-slate-500">
             {isClub
-              ? 'We will keep you posted about upcoming events.'
-              : 'We look forward to seeing you at the event.'}
+              ? "We will keep you posted about upcoming events."
+              : "We look forward to seeing you at the event."}
           </p>
 
           <div className="mt-4 rounded-xl border border-indigo-100 bg-indigo-50 p-4">
             <p className="text-xs font-medium text-slate-500">
-              {isClub ? 'Membership ID' : 'Registration ID'}
+              {isClub ? "Membership ID" : "Registration ID"}
             </p>
 
             <p className="mt-1 text-lg font-bold tracking-wider text-indigo-700">
@@ -189,13 +169,9 @@ export default function RegisterModal({
             </p>
           </div>
 
-          <button
-            className="btn-primary mt-5 w-full"
-            onClick={onClose}
-          >
+          <button className="btn-primary mt-5 w-full" onClick={onClose}>
             Done
           </button>
-
         </div>
       </Modal>
     );
@@ -205,24 +181,15 @@ export default function RegisterModal({
 
   return (
     <Modal
-      title={
-        isClub
-          ? `Join ${item.name}`
-          : `Register: ${item.title}`
-      }
+      title={isClub ? `Join ${item.name}` : `Register: ${item.title}`}
       onClose={onClose}
     >
-      <form
-        onSubmit={submit}
-        className="space-y-4"
-        noValidate
-      >
-
+      <form onSubmit={submit} className="space-y-4" noValidate>
         {/* Full Name */}
         <Field
           label="Full Name"
           value={f.name}
-          onChange={set('name')}
+          onChange={set("name")}
           error={errs.name}
           type="text"
           autoComplete="name"
@@ -233,7 +200,7 @@ export default function RegisterModal({
         <Field
           label="Email"
           value={f.email}
-          onChange={set('email')}
+          onChange={set("email")}
           error={errs.email}
           type="email"
           autoComplete="email"
@@ -244,7 +211,7 @@ export default function RegisterModal({
         <Field
           label="College"
           value={f.college}
-          onChange={set('college')}
+          onChange={set("college")}
           error={errs.college}
           type="text"
           autoComplete="organization"
@@ -253,22 +220,18 @@ export default function RegisterModal({
 
         {/* Year */}
         <div>
-          <label className="label">
-            Year
-          </label>
+          <label className="label">Year</label>
 
           <select
             className={`input ${
               errs.year
-                ? 'border-red-400 focus:border-red-500 focus:ring-red-500/10'
-                : ''
+                ? "border-red-400 focus:border-red-500 focus:ring-red-500/10"
+                : ""
             }`}
             value={f.year}
-            onChange={set('year')}
+            onChange={set("year")}
           >
-            <option value="">
-              Select year
-            </option>
+            <option value="">Select year</option>
 
             {YEARS.map((y) => (
               <option key={y} value={y}>
@@ -278,9 +241,7 @@ export default function RegisterModal({
           </select>
 
           {errs.year && (
-            <p className="mt-1 text-xs font-medium text-red-600">
-              {errs.year}
-            </p>
+            <p className="mt-1 text-xs font-medium text-red-600">{errs.year}</p>
           )}
         </div>
 
@@ -288,7 +249,7 @@ export default function RegisterModal({
         <Field
           label="Phone Number"
           value={f.phone}
-          onChange={set('phone')}
+          onChange={set("phone")}
           error={errs.phone}
           type="tel"
           inputMode="numeric"
@@ -299,9 +260,7 @@ export default function RegisterModal({
 
         {/* Club / Event ID */}
         <div>
-          <label className="label">
-            {isClub ? 'Club ID' : 'Event ID'}
-          </label>
+          <label className="label">{isClub ? "Club ID" : "Event ID"}</label>
 
           <input
             className="input cursor-not-allowed bg-slate-100 text-slate-500"
@@ -316,13 +275,8 @@ export default function RegisterModal({
           className="btn-primary w-full py-3"
           disabled={busy}
         >
-          {busy
-            ? 'Submitting...'
-            : isClub
-              ? 'Join Club'
-              : 'Register Now'}
+          {busy ? "Submitting..." : isClub ? "Join Club" : "Register Now"}
         </button>
-
       </form>
     </Modal>
   );
