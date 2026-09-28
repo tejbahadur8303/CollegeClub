@@ -1,0 +1,33 @@
+import axios from 'axios';
+const api = axios.create({ baseURL: import.meta.env.VITE_API_URL });
+api.interceptors.request.use(c => { const t = localStorage.getItem('token'); if (t) c.headers.Authorization = `Bearer ${t}`; return c; });
+api.interceptors.response.use(r => r, e => {
+  if (e.response?.status === 401 && localStorage.getItem('token')) { localStorage.removeItem('token'); localStorage.removeItem('user'); if (location.pathname.startsWith('/admin') && location.pathname !== '/admin/login') location.href = '/admin/login'; }
+  return Promise.reject(e);
+});
+export const errMsg = e => e.response?.data?.message || e.message || 'Something went wrong';
+const d = p => p.then(r => r.data.data);
+export const getEvents = params => d(api.get('/events', { params }));
+export const getEventById = id => d(api.get(`/events/${id}`));
+export const getPublicStats = () => d(api.get('/events/stats'));
+export const createEvent = b => api.post('/events', b).then(r => r.data);
+export const updateEvent = (id, b) => api.put(`/events/${id}`, b).then(r => r.data);
+export const deleteEvent = id => api.delete(`/events/${id}`).then(r => r.data);
+export const registerForEvent = b => d(api.post('/registrations', b));
+export const loginAdmin = b => d(api.post('/auth/login', b));
+export const getMe = () => d(api.get('/auth/me'));
+export const getDashboardStats = () => d(api.get('/dashboard/stats'));
+export const getRecentEvents = () => d(api.get('/dashboard/recent-events'));
+export const getRecentRegistrations = () => d(api.get('/dashboard/recent-registrations'));
+export const getRegistrations = params => d(api.get('/registrations', { params }));
+export const deleteRegistration = id => api.delete(`/registrations/${id}`).then(r => r.data);
+export const getClubs = () => d(api.get('/clubs'));
+export const getClub = idOrSlug => d(api.get(`/clubs/${idOrSlug}`));
+export const createClub = b => api.post('/clubs', b).then(r => r.data);
+export const updateClub = (id, b) => api.put(`/clubs/${id}`, b).then(r => r.data);
+export const deleteClub = id => api.delete(`/clubs/${id}`).then(r => r.data);
+export const joinClub = b => d(api.post('/memberships', b));
+export const getMemberships = params => d(api.get('/memberships', { params }));
+export const deleteMembership = id => api.delete(`/memberships/${id}`).then(r => r.data);
+export const getRecentMembers = () => d(api.get('/dashboard/recent-members'));
+export const getClubBreakdown = () => d(api.get('/dashboard/club-breakdown'));
